@@ -68,13 +68,26 @@ public static class Extensions
     private static IHostApplicationBuilder AddOpenTelemetryExporters(this IHostApplicationBuilder builder)
     {
         var useOtlpExporter = !string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);
-
+        
         if (useOtlpExporter)
         {
             builder.Services.Configure<OpenTelemetryLoggerOptions>(logging => logging.AddOtlpExporter());
             builder.Services.ConfigureOpenTelemetryMeterProvider(metrics => metrics.AddOtlpExporter());
             builder.Services.ConfigureOpenTelemetryTracerProvider(tracing => tracing.AddOtlpExporter());
         }
+        
+        var hyperDxEndpoint = "http://localhost:4318/v1/traces";
+        var hyperDxApiKey = "sss";
+        
+        builder.Services.Configure<OpenTelemetryLoggerOptions>(logging =>
+            logging.AddOtlpExporter(options =>
+            {
+                options.Endpoint = new Uri(hyperDxEndpoint);
+                // options.Headers = $"authorization={hyperDxApiKey}";
+            })
+        );
+
+
 
         // Uncomment the following lines to enable the Prometheus exporter (requires the OpenTelemetry.Exporter.Prometheus.AspNetCore package)
         // builder.Services.AddOpenTelemetry()

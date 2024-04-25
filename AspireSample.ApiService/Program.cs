@@ -18,6 +18,8 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
 {
+    Console.WriteLine("Somos los piratas");
+    Console.WriteLine("Somos los piratas");
     var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
